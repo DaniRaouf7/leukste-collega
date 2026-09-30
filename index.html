@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wie is de leukste collega? 🏆</title>
-    <!-- Tailwind CSS for styling -->
+    <title>Wie is de allerleukste collega? 🏆</title>
+    <!-- Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -16,7 +16,7 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 50%, #fecfef 100%);
             min-height: 100vh;
         }
 
@@ -24,7 +24,7 @@
             font-family: 'Fredoka', cursive;
         }
 
-        /* Bouncy animations */
+        /* Bounce & Shake animations */
         @keyframes bounce-gentle {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
@@ -41,12 +41,22 @@
         }
 
         .animate-pop-in {
-            animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-12px); }
+            40%, 80% { transform: translateX(12px); }
+        }
+
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(236, 72, 153, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(236, 72, 153, 0.9); }
+            0%, 100% { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); }
+            50% { shadow: 0 0 30px rgba(236, 72, 153, 0.8); }
         }
 
         .pulse-button {
@@ -68,7 +78,7 @@
                 transform: translateY(0) scale(0.5) rotate(0deg);
             }
             50% {
-                transform: translateY(-200px) scale(1.2) rotate(180deg);
+                transform: translateY(-200px) scale(1.3) rotate(180deg);
             }
             100% {
                 opacity: 0;
@@ -80,11 +90,11 @@
 <body class="flex items-center justify-center p-4 sm:p-6 min-h-screen">
 
     <!-- Main Card Container -->
-    <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-6 sm:p-10 max-w-lg w-full text-center relative overflow-hidden transition-all duration-500">
+    <div id="mainCard" class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-6 sm:p-10 max-w-lg w-full text-center relative overflow-hidden transition-all duration-300">
         
         <!-- Header Badge -->
-        <div class="inline-flex items-center gap-2 bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full font-bold text-sm mb-6 animate-bounce-gentle">
-            <i class="fa-solid fa-crown text-yellow-500"></i> Officieële Kantoor Verkiezing
+        <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full font-bold text-sm mb-6 animate-bounce-gentle">
+            <i class="fa-solid fa-trophy text-yellow-500"></i> Officieuze Kantoor Verkiezing
         </div>
 
         <!-- STAGE 1: Quiz Form -->
@@ -97,61 +107,85 @@
                 Vul hieronder jouw stem in. De uitslag is 100% wetenschappelijk onderbouwd! 😉
             </p>
 
-            <div class="space-y-4 pt-2">
+            <form onsubmit="controleerAntwoord(event)" class="space-y-4 pt-2">
                 <div class="relative">
                     <input 
                         type="text" 
                         id="collegaInput" 
                         placeholder="Typ hier een naam..." 
-                        class="w-full px-5 py-4 text-lg border-2 border-pink-200 rounded-2xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none transition-all text-center font-bold text-gray-700 shadow-inner"
+                        class="w-full px-5 py-4 text-lg border-2 border-indigo-200 rounded-2xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none transition-all text-center font-bold text-gray-700 shadow-inner"
                         autocomplete="off"
                     >
                 </div>
 
                 <button 
-                    onclick="berekenUitslag()" 
+                    type="submit"
                     class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white font-fun font-bold text-xl py-4 px-6 rounded-2xl shadow-lg transform active:scale-95 transition-all duration-200 pulse-button flex items-center justify-center gap-2"
                 >
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Bekijk Uitslag! 🎉
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Check Uitslag! 🎉
                 </button>
-            </div>
+            </form>
         </div>
 
-        <!-- STAGE 2: Result Container (Hidden initially) -->
-        <div id="resultContainer" class="hidden space-y-6">
+        <!-- STAGE 2A: Dani Victory Screen -->
+        <div id="daniScreen" class="hidden space-y-6 animate-pop-in">
+            <div class="text-6xl mb-2">👑🏆✨</div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-amber-500 font-fun">
+                ABSOLUUT WAAR!
+            </h2>
             
-            <!-- Compliment Header -->
-            <div class="animate-pop-in space-y-2">
-                <div class="text-5xl mb-2">👑🎉✨</div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-pink-600 font-fun">
-                    Dat ben jij, Aimee!
-                </h2>
-                <p class="text-gray-500 font-bold text-sm tracking-widest uppercase">
-                    Unaniem gekozen tot Favoriet van de Afdeling!
+            <div class="bg-gradient-to-r from-amber-50 to-yellow-100 border-2 border-amber-300 p-6 rounded-2xl shadow-inner space-y-3">
+                <p class="text-2xl font-black text-amber-900 font-fun">
+                    Dani is en blijft de onbetwiste #1 baas van de afdeling! 😎🔥
+                </p>
+                <p class="text-sm text-amber-700 font-bold">
+                    Eerlijk is eerlijk: tegen Dani kan simpelweg niemand op!
                 </p>
             </div>
 
-            <!-- Suspense Loading Dots (Before joke appears) -->
-            <div id="suspenseLoader" class="py-4 space-y-2">
-                <div class="flex justify-center items-center gap-2 text-pink-400 text-xl">
-                    <i class="fa-solid fa-circle-notch animate-spin"></i>
-                    <span class="font-bold text-sm">Aanvullende analyse laden...</span>
+            <button 
+                onclick="resetForm()" 
+                class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2"
+            >
+                <i class="fa-solid fa-rotate-left"></i> Probeer nog eens (als je Aimee bent...)
+            </button>
+        </div>
+
+        <!-- STAGE 2B: Aimee Result Screen -->
+        <div id="aimeeScreen" class="hidden space-y-6">
+            
+            <!-- Compliment Header -->
+            <div class="animate-pop-in space-y-2">
+                <div class="text-5xl mb-2">🎉✨👸🏼</div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-pink-600 font-fun">
+                    Dat ben jij, Aimee!
+                </h2>
+                
+                <!-- Dani Disclaimer -->
+                <div class="bg-indigo-50 border border-indigo-200 text-indigo-800 p-3 rounded-xl text-sm font-bold animate-pop-in">
+                    ...Nou ja, <span class="text-pink-600 underline">op Dani na</span> natuurlijk! 😉<br>
+                    <span class="text-xs font-semibold text-indigo-600">(Je staat wel heeeeeel stevig op plek #2! 🥈)</span>
                 </div>
             </div>
 
-            <!-- The Joke Reveal (Hidden initially, shown after 2s) -->
+            <!-- Suspense Loading Dots -->
+            <div id="suspenseLoader" class="py-4 space-y-2">
+                <div class="flex justify-center items-center gap-2 text-pink-500 text-lg">
+                    <i class="fa-solid fa-circle-notch animate-spin"></i>
+                    <span class="font-bold text-sm">Analyse van fysieke kantoorstatus laden...</span>
+                </div>
+            </div>
+
+            <!-- The Joke Reveal (Hidden initially) -->
             <div id="jokeSection" class="hidden space-y-6">
                 
                 <!-- Main Joke Card -->
                 <div class="bg-amber-50 border-2 border-dashed border-amber-300 p-5 rounded-2xl shadow-sm text-center relative animate-pop-in">
                     <p class="text-2xl font-bold text-gray-800 font-fun mb-1">
-                        Jammer alleen van je dikke buik... 😜🤰
+                        Jammer alleen van je dikke buik... 😜🤰🏼👶🏼
                     </p>
-                    <p class="text-amber-700 font-bold text-base sm:text-lg">
-                        ...maar gelukkig zit er een baby in! 👶🍼
-                    </p>
-                    <p class="text-xs text-amber-600 mt-2 italic">
-                        (Mini-collega status: <strong>Loading... ⏳</strong>)
+                    <p class="text-amber-800 font-bold text-base sm:text-lg">
+                        ...maar gelukkig zit er een mini-collega in! 🍼
                     </p>
                 </div>
 
@@ -159,15 +193,15 @@
                 <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-left space-y-2">
                     <div class="flex justify-between items-center text-xs font-bold text-gray-600">
                         <span><i class="fa-solid fa-baby text-pink-500"></i> Baby Bump Status</span>
-                        <span class="text-pink-600">85% Loaded 🥐</span>
+                        <span class="text-pink-600">88% Loaded 🥐</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden p-0.5">
-                        <div class="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full transition-all duration-1000 w-[85%] relative">
+                        <div class="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full transition-all duration-1000 w-[88%] relative">
                             <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
                         </div>
                     </div>
                     <p class="text-[11px] text-gray-500 text-center italic pt-1">
-                        ⚠️ Waarschuwing: Extra snacks & taart vereist voor optimale werking!
+                        ⚠️ Waarschuwing: Baby groeit sneller dan de stijging van het kantoorkoffieverbruik!
                     </p>
                 </div>
 
@@ -177,147 +211,176 @@
                         onclick="voerAimeeVoedselUit()" 
                         class="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold text-sm py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 transform active:scale-95"
                     >
-                        <span>🍩</span> Virtuele Snack Geven
+                        <span>🍩🍕</span> Voer Aimee een snack!
                     </button>
 
                     <button 
-                        onclick="openBabyStatusModal()" 
+                        onclick="speelBabyTraptest()" 
                         class="bg-sky-400 hover:bg-sky-500 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 transform active:scale-95"
                     >
-                        <span>👶</span> Check Baby Status
+                        <span>👶⚡</span> Baby Traptest!
                     </button>
                 </div>
 
-                <!-- Footer Note -->
-                <div class="text-xs text-gray-400 pt-2 border-t border-gray-100">
-                    Gemaakt met ❤️ door je allerleukste collega's!
+                <!-- Interactive Baby Toast Bubble -->
+                <div id="babyQuoteBox" class="hidden bg-sky-50 border border-sky-200 text-sky-900 p-3 rounded-xl text-xs font-bold animate-pop-in text-center">
+                    <!-- Dynamic quote inserted via JS -->
                 </div>
+
+                <button 
+                    onclick="resetForm()" 
+                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 px-4 rounded-xl text-xs transition"
+                >
+                     Opnieuw invullen
+                </button>
 
             </div>
 
         </div>
 
-    </div>
-
-    <!-- Baby Status Modal -->
-    <div id="babyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl animate-pop-in">
-            <div class="text-4xl">🍼🩺</div>
-            <h3 class="text-2xl font-bold font-fun text-gray-800">Baby Status Rapport</h3>
+        <!-- STAGE 2C: Wrong Name Screen -->
+        <div id="wrongScreen" class="hidden space-y-6 animate-pop-in">
+            <div class="text-6xl mb-2">❌🤦‍♂️🚫</div>
+            <h2 class="text-3xl font-extrabold text-red-600 font-fun">
+                FOUT ANTWOORD!
+            </h2>
             
-            <ul class="text-left text-sm space-y-2 bg-pink-50 p-4 rounded-2xl text-gray-700">
-                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Trappen tegen ribben: <strong>Actief</strong></li>
-                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Trek in vreemd eten: <strong>100%</strong></li>
-                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Kantoor-overname plan: <strong>Gereed</strong></li>
-                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Zwangerschapsverlof: <strong>Bijna zover! 🎉</strong></li>
-            </ul>
+            <div class="bg-red-50 border border-red-200 p-5 rounded-2xl text-red-800 space-y-2">
+                <p class="text-lg font-bold">
+                    <span id="wrongNameHolder" class="underline decoration-wavy">...</span> is absoluut <span class="uppercase">niet</span> de leukste collega!
+                </p>
+                <p class="text-xs text-red-600 italic">
+                    💡 Hint: Probeer het eens met <strong>Dani</strong> (de echte #1) of <strong>Aimee</strong> (de leukste #2)!
+                </p>
+            </div>
 
             <button 
-                onclick="sluitBabyStatusModal()" 
-                class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-xl transition"
+                onclick="resetForm()" 
+                class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2"
             >
-                Super Lief! 💕
+                <i class="fa-solid fa-rotate-left"></i> Opnieuw proberen!
             </button>
         </div>
+
     </div>
 
     <script>
-        // Main function triggered when user clicks "Bekijk Uitslag"
-        function berekenUitslag() {
-            const quizForm = document.getElementById('quizForm');
-            const resultContainer = document.getElementById('resultContainer');
-            const suspenseLoader = document.getElementById('suspenseLoader');
-            const jokeSection = document.getElementById('jokeSection');
-
-            // Hide form, show result block
-            quizForm.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
-
-            // Fire confetti burst!
-            geefConfetti();
-
-            // After 2.2 seconds, reveal the pregnancy joke
-            setTimeout(() => {
-                suspenseLoader.classList.add('hidden');
-                jokeSection.classList.remove('hidden');
-                // Second celebratory smaller confetti shower
-                confetti({
-                    particleCount: 50,
-                    spread: 60,
-                    origin: { y: 0.7 }
-                });
-            }, 2200);
-        }
-
-        // Fun celebration confetti
-        function geefConfetti() {
-            var count = 200;
-            var defaults = {
-                origin: { y: 0.7 }
-            };
-
-            function fire(particleRatio, opts) {
-                confetti(Object.assign({}, defaults, opts, {
-                    particleCount: Math.floor(count * particleRatio)
-                }));
-            }
-
-            fire(0.25, {
-                spread: 26,
-                startVelocity: 55,
-            });
-            fire(0.2, {
-                spread: 60,
-            });
-            fire(0.35, {
-                spread: 100,
-                decay: 0.91,
-                scalar: 0.8
-            });
-            fire(0.1, {
-                spread: 120,
-                startVelocity: 25,
-                decay: 0.92,
-                scalar: 1.2
-            });
-            fire(0.1, {
-                spread: 120,
-                startVelocity: 45,
-            });
-        }
-
-        // Spawn floating snack icons on screen
-        function voerAimeeVoedselUit() {
-            const snacks = ['🍩', '🍕', '🍰', '🍫', '🥐', '🍔', '🍦', '🍓'];
+        // Check input answer logic
+        function controleerAntwoord(e) {
+            e.preventDefault();
             
-            for (let i = 0; i < 8; i++) {
+            const inputVal = document.getElementById('collegaInput').value.trim().toLowerCase();
+            const quizForm = document.getElementById('quizForm');
+            const mainCard = document.getElementById('mainCard');
+
+            if (!inputVal) return;
+
+            // Reset shake animation
+            mainCard.classList.remove('animate-shake');
+
+            // 1. Dani Option
+            if (inputVal === 'dani') {
+                quizForm.classList.add('hidden');
+                document.getElementById('daniScreen').classList.remove('hidden');
+                geefConfettiGoud();
+            }
+            // 2. Aimee Option
+            else if (inputVal === 'aimee') {
+                quizForm.classList.add('hidden');
+                document.getElementById('aimeeScreen').classList.remove('hidden');
+                geefConfettiRoze();
+
+                // Reveal joke after suspense
+                setTimeout(() => {
+                    document.getElementById('suspenseLoader').classList.add('hidden');
+                    document.getElementById('jokeSection').classList.remove('hidden');
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                }, 2000);
+            }
+            // 3. Wrong Name Option
+            else {
+                mainCard.classList.add('animate-shake');
+                quizForm.classList.add('hidden');
+                document.getElementById('wrongNameHolder').innerText = document.getElementById('collegaInput').value;
+                document.getElementById('wrongScreen').classList.remove('hidden');
+            }
+        }
+
+        // Reset to initial form
+        function resetForm() {
+            document.getElementById('collegaInput').value = '';
+            document.getElementById('quizForm').classList.remove('hidden');
+            document.getElementById('daniScreen').classList.add('hidden');
+            document.getElementById('aimeeScreen').classList.add('hidden');
+            document.getElementById('wrongScreen').classList.add('hidden');
+            document.getElementById('suspenseLoader').classList.remove('hidden');
+            document.getElementById('jokeSection').classList.add('hidden');
+            document.getElementById('babyQuoteBox').classList.add('hidden');
+            document.getElementById('mainCard').classList.remove('animate-shake');
+        }
+
+        // Confetti for Dani (Gold/Yellow theme)
+        function geefConfettiGoud() {
+            confetti({
+                particleCount: 150,
+                spread: 90,
+                colors: ['#f59e0b', '#fbbf24', '#ffffff'],
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Confetti for Aimee (Pink/Rose theme)
+        function geefConfettiRoze() {
+            confetti({
+                particleCount: 150,
+                spread: 90,
+                colors: ['#ec4899', '#f43f5e', '#a855f7', '#ffffff'],
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Floating snack animation
+        function voerAimeeVoedselUit() {
+            const snacks = ['🍩', '🍕', '🍰', '🍫', '🥐', '🍔', '🍦', '🍓', '🥨', '🥒'];
+            
+            for (let i = 0; i < 10; i++) {
                 setTimeout(() => {
                     const snack = document.createElement('div');
                     snack.className = 'floating-snack';
                     snack.innerText = snacks[Math.floor(Math.random() * snacks.length)];
                     
-                    // Random positions across bottom of screen
                     const randomX = Math.random() * (window.innerWidth - 60);
                     snack.style.left = randomX + 'px';
                     snack.style.bottom = '20px';
                     
                     document.body.appendChild(snack);
                     
-                    // Remove element after animation finishes
-                    setTimeout(() => {
-                        snack.remove();
-                    }, 3000);
-                }, i * 150);
+                    setTimeout(() => snack.remove(), 3000);
+                }, i * 120);
             }
         }
 
-        // Modal triggers
-        function openBabyStatusModal() {
-            document.getElementById('babyModal').classList.remove('hidden');
-        }
+        // Baby Kick Quotes
+        const babyQuotes = [
+            "💥 Auw! Rib geschopt! (Dat wordt later een voetballer!)",
+            "🍼 Kaugom met augurken a.u.b. NU!",
+            "⏰ Tijd voor zwangerschapsverlof en niks doen!",
+            "🥐 De baby eist nu een extra croissantje!",
+            "😴 Tijd voor een kantoordutje van 3 uur...",
+            "👣 *Trap trap*... Laat me eruit, ik wil taart!"
+        ];
 
-        function sluitBabyStatusModal() {
-            document.getElementById('babyModal').classList.add('hidden');
+        function speelBabyTraptest() {
+            const quoteBox = document.getElementById('babyQuoteBox');
+            const randomQuote = babyQuotes[Math.floor(Math.random() * babyQuotes.length)];
+            
+            quoteBox.innerHTML = `<strong>Baby meldt:</strong> "${randomQuote}"`;
+            quoteBox.classList.remove('hidden');
+            
+            // Pop effect
+            quoteBox.classList.remove('animate-pop-in');
+            void quoteBox.offsetWidth; // trigger reflow
+            quoteBox.classList.add('animate-pop-in');
         }
     </script>
 </body>
